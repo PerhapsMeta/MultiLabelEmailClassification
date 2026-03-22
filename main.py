@@ -1,4 +1,4 @@
-#This is a main file: The controller. All methods will directly on directly be called here
+#This is a main file: The controller. All methods will directly be called here
 from preprocess import *
 from embeddings import *
 from modelling.modelling import *
