@@ -1,56 +1,37 @@
-from preprocess import *
-from embeddings import *
-from modelling.modelling import *
-from modelling.data_model import *
-import random
-seed =0
-random.seed(seed)
-np.random.seed(seed)
+import sys
+
+# //MODIFY: Disable Python bytecode cache generation before importing project modules.
+sys.dont_write_bytecode = True
+
+from Config import AppConfig, Config
+from data import build_dataset_bundle
+from modelling import ModelRunner
+from preprocessing import prepare_data
 
 
-def load_data():
-    #load the input data
-    df = get_input_data()
-    return  df
-
-def preprocess_data(df):
-    # De-duplicate input data
-    df =  de_duplication(df)
-    # remove noise in input data
-    df = noise_remover(df)
-    # translate data to english
-    # df[Config.TICKET_SUMMARY] = translate_to_en(df[Config.TICKET_SUMMARY].tolist())
-    return df
-
-def get_embeddings(df:pd.DataFrame):
-    X = get_tfidf_embd(df)  # get tf-idf embeddings
-    return X, df
-
-def get_data_object(X: np.ndarray, df: pd.DataFrame):
-    return Data(X, df)
-
-def perform_modelling(data: Data, df: pd.DataFrame, name):
-    model_predict(data, df, name)
-
-
-def print_group_header(name: str, group_df: pd.DataFrame):
-    label_counts = group_df["y"].value_counts()
-    label_text = ", ".join([f"{label}={count}" for label, count in label_counts.items()])
-
+def print_pipeline_summary(prepared_data, dataset_bundle, config: AppConfig) -> None:
+    # //MODIFY: Summarize the shared chained dataset once because Type 1 grouping is intentionally removed.
     print("\n" + "=" * 80)
-    print(f"Group: {name.strip()}")
-    print("Simple intro: the report below compares each model on this ticket group. Higher precision, recall, f1, and accuracy mean better classification.")
-    print(f"Samples: {len(group_df)} | Labels: {label_text}")
+    print("Chained Multi-Label Classification Pipeline")
+    print("The pipeline cleans the ticket text, builds chained labels, creates one shared split, and evaluates each model across all hierarchy levels.")
+    print(f"Raw samples: {len(prepared_data.raw_df)}")
+    print(f"Prepared samples with Type 2 labels: {len(prepared_data.clean_df)}")
+    print(f"Samples kept after Level 3 class filtering: {len(dataset_bundle.filtered_df)}")
+    print(f"Train samples: {len(dataset_bundle.train_idx)} | Test samples: {len(dataset_bundle.test_idx)}")
+    for level_name in Config.CHAIN_LEVELS:
+        class_count = dataset_bundle.label_df[level_name].nunique()
+        print(f"{config.level_display_name(level_name)} classes: {class_count}")
     print("=" * 80)
 
-if __name__ == '__main__':
-    df = load_data()
-    df = preprocess_data(df)
-    df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
-    df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
-    grouped_df = df.groupby(Config.GROUPED)
-    for name, group_df in grouped_df:
-        print_group_header(name, group_df)
-        X, group_df = get_embeddings(group_df)
-        data = get_data_object(X, group_df)
-        perform_modelling(data, group_df, name)
+
+def main() -> None:
+    config = AppConfig()
+    prepared_data = prepare_data(config)
+    dataset_bundle = build_dataset_bundle(prepared_data, config)
+    print_pipeline_summary(prepared_data, dataset_bundle, config)
+    runner = ModelRunner(config)
+    runner.run(dataset_bundle)
+
+
+if __name__ == "__main__":
+    main()
