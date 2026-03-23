@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from model.base import BaseModel
+from model.base import BaseModel, format_metrics_report
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
@@ -25,7 +25,9 @@ class RandomTreesEmbedding(BaseModel):
         self.predictions = predictions
 
     def print_results(self, data):
-        print(classification_report(data.y_test, self.predictions))
+        report = format_metrics_report(data.y_test, self.predictions)
+        print(report)
+        return report
 
 
     def get_proba(self, X_test) -> pd.DataFrame:

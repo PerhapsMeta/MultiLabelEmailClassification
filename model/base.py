@@ -2,6 +2,22 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 import numpy as np
+from sklearn.metrics import accuracy_score, classification_report, f1_score
+
+
+def format_metrics_report(y_true, y_pred) -> str:
+    accuracy = accuracy_score(y_true, y_pred)
+    macro_f1 = f1_score(y_true, y_pred, average="macro", zero_division=0)
+    weighted_f1 = f1_score(y_true, y_pred, average="weighted", zero_division=0)
+    report = classification_report(y_true, y_pred, zero_division=0)
+
+    return "\n".join(
+        [
+            "Intro: precision = predicted labels that were correct, recall = true labels that were found, f1 = balance between precision and recall, support = number of test samples.",
+            f"Summary: accuracy={accuracy:.2f} | macro_f1={macro_f1:.2f} | weighted_f1={weighted_f1:.2f}",
+            report,
+        ]
+    )
 
 
 class BaseModel(ABC):
@@ -25,6 +41,7 @@ class BaseModel(ABC):
         """
         ...
 
+    #
     @abstractmethod
     def data_transform(self) -> None:
         return

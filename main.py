@@ -32,6 +32,17 @@ def get_data_object(X: np.ndarray, df: pd.DataFrame):
 def perform_modelling(data: Data, df: pd.DataFrame, name):
     model_predict(data, df, name)
 
+
+def print_group_header(name: str, group_df: pd.DataFrame):
+    label_counts = group_df["y"].value_counts()
+    label_text = ", ".join([f"{label}={count}" for label, count in label_counts.items()])
+
+    print("\n" + "=" * 80)
+    print(f"Group: {name.strip()}")
+    print("Simple intro: the report below compares each model on this ticket group. Higher precision, recall, f1, and accuracy mean better classification.")
+    print(f"Samples: {len(group_df)} | Labels: {label_text}")
+    print("=" * 80)
+
 if __name__ == '__main__':
     df = load_data()
     df = preprocess_data(df)
@@ -39,8 +50,7 @@ if __name__ == '__main__':
     df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
     grouped_df = df.groupby(Config.GROUPED)
     for name, group_df in grouped_df:
-        print(name)
+        print_group_header(name, group_df)
         X, group_df = get_embeddings(group_df)
         data = get_data_object(X, group_df)
         perform_modelling(data, group_df, name)
-
