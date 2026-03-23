@@ -1,4 +1,3 @@
-#This is a main file: The controller. All methods will directly be called here
 from preprocess import *
 from embeddings import *
 from modelling.modelling import *
@@ -20,7 +19,7 @@ def preprocess_data(df):
     # remove noise in input data
     df = noise_remover(df)
     # translate data to english
-    df[Config.TICKET_SUMMARY] = translate_to_en(df[Config.TICKET_SUMMARY].tolist())
+    # df[Config.TICKET_SUMMARY] = translate_to_en(df[Config.TICKET_SUMMARY].tolist())
     return df
 
 def get_embeddings(df:pd.DataFrame):
@@ -32,19 +31,16 @@ def get_data_object(X: np.ndarray, df: pd.DataFrame):
 
 def perform_modelling(data: Data, df: pd.DataFrame, name):
     model_predict(data, df, name)
-# Code will start executing from following line
+
 if __name__ == '__main__':
-    
-    # pre-processing steps
     df = load_data()
     df = preprocess_data(df)
     df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
     df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
-    
-    # data transformation
-    X, group_df = get_embeddings(df)
-    # data modelling
-    data = get_data_object(X, df)
-    # modelling
-    perform_modelling(data, df, 'name')
+    grouped_df = df.groupby(Config.GROUPED)
+    for name, group_df in grouped_df:
+        print(name)
+        X, group_df = get_embeddings(group_df)
+        data = get_data_object(X, group_df)
+        perform_modelling(data, group_df, name)
 
