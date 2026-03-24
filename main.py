@@ -1,6 +1,6 @@
 import sys
 
-# //MODIFY: Disable Python bytecode cache generation before importing project modules.
+# MODIFY: Disable Python bytecode cache generation before importing project modules.
 sys.dont_write_bytecode = True
 
 from Config import AppConfig, Config
@@ -10,7 +10,7 @@ from preprocessing import prepare_data
 
 
 def print_pipeline_summary(prepared_data, dataset_bundle, config: AppConfig) -> None:
-    # //MODIFY: Summarize the shared chained dataset once because Type 1 grouping is intentionally removed.
+    # MODIFY: Summarize the shared chained dataset once because Type 1 grouping is intentionally removed.
     print("\n" + "=" * 80)
     print("Chained Multi-Label Classification Pipeline")
     print("The pipeline cleans the ticket text, builds chained labels, creates one shared split, and evaluates each model across all hierarchy levels.")

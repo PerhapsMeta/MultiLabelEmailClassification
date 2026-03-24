@@ -10,6 +10,88 @@ This design captures the dependencies between labels and ensures that the predic
 
 ---
 
+## Project Directory Structure
+
+├── main.py                          # Main entry point that coordinates the full workflow
+├── Config.py                        # Configuration file
+│
+├── preprocessing/
+│   ├── __init__.py                  # Preprocessing package entry
+│   └── pipeline.py                  # Data loading, cleaning, and chained label construction
+│
+├── data/
+│   ├── __init__.py                  # Data package entry
+│   ├── dataset.py                   # Dataset preparation and train/test split logic
+│   ├── AppGallery.csv               # Input dataset 1
+│   └── Purchasing.csv               # Input dataset 2
+│
+├── modelling/
+│   ├── __init__.py                  # Modelling package entry
+│   ├── runner.py                    # Model runner and evaluation controller
+│   └── results.py                   # Result aggregation and CSV export
+│
+├── models/                          # Model implementation directory
+│   ├── base.py                      # Shared base model interface
+│   ├── random_forest_model.py       # Random Forest classifier
+│   ├── hist_gb_model.py             # Histogram Gradient Boosting classifier
+│   ├── sgd_model.py                 # SGD classifier
+│   ├── adaboost_model.py            # AdaBoost classifier
+│   ├── voting_model.py              # Voting ensemble classifier
+│   └── extra_trees_model.py         # Extra Trees classifier
+│
+├── cleaned_tickets.csv              # Cleaned intermediate dataset
+└── results_summary.csv              # Final result output
+
+
+
+## Execution Flow
+
+main.py (entry point)
+  ↓
+prepare_data() [preprocessing/pipeline.py]
+  → Read data/AppGallery.csv + data/Purchasing.csv
+  → Apply column mapping and text cleaning
+  → Build chained labels
+  → Save cleaned_tickets.csv
+  ↓
+build_dataset_bundle() [data/dataset.py]
+  → Vectorize text with TF-IDF
+  → Split data into training and testing sets (80/20)
+  → Build aligned chained datasets
+  ↓
+ModelRunner.run() [modelling/runner.py]
+  → Train 6 models in sequence:
+    - RandomForest
+    - HistGradientBoosting
+    - SGD
+    - AdaBoost
+    - Voting
+    - ExtraTrees
+  → Evaluate each model across 3 chained levels
+  → Save results_summary.csv
+
+## Design Patterns 
+
+Facade/Controller (main.py)
+main.py orchestrates preprocessing → dataset building → modelling → results export.
+Keeps business logic in modules, main is a single coordinator.
+
+Strategy (models)
+RandomForest, HistGradientBoosting, SGD, AdaBoost, Voting, ExtraTrees implement a common model interface.
+Runner can swap algorithms without pipeline changes.
+
+Factory/Registry (model registration)
+Central model registry maps names to classes; runner instantiates models dynamically.
+Add new model with minimal pipeline edits.
+
+Template Method (BaseModel)
+Base class defines training/predict/report workflow; concrete models implement estimator-specific details.
+Reduces duplicate code and standardizes behavior.
+
+Data Transfer Objects (data containers)
+Structured objects for prepared data, dataset bundle, level results, model results.
+Ensures clear, consistent multi-level chain label flow.
+
 ## Environment Setup
 
 Follow the steps below to set up the environment using Conda:
