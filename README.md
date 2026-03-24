@@ -12,6 +12,7 @@ This design captures the dependencies between labels and ensures that the predic
 
 ## Project Directory Structure
 
+```text
 ├── main.py                          # Main entry point that coordinates the full workflow
 ├── Config.py                        # Configuration file
 │
@@ -46,6 +47,7 @@ This design captures the dependencies between labels and ensures that the predic
 
 ## Execution Flow
 
+```text
 main.py (entry point)
   ↓
 prepare_data() [preprocessing/pipeline.py]
