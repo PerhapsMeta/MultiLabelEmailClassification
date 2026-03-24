@@ -42,7 +42,7 @@ This design captures the dependencies between labels and ensures that the predic
 │
 ├── cleaned_tickets.csv              # Cleaned intermediate dataset
 └── results_summary.csv              # Final result output
-
+```
 
 
 ## Execution Flow
@@ -71,6 +71,7 @@ ModelRunner.run() [modelling/runner.py]
     - ExtraTrees
   → Evaluate each model across 3 chained levels
   → Save results_summary.csv
+```
 
 ## Design Patterns 
 
