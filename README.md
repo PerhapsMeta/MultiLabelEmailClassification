@@ -10,6 +10,14 @@ This design captures the dependencies between labels and ensures that the predic
 
 ---
 
+## Result Sample
+
+| model_name   | level_name                              | level_accuracy | model_accuracy |
+|--------------|------------------------------------------|--------------|---------------------|
+| RandomForest | Level 1 (Type 2)                         | 0.775        | 0.7083333333333334  |
+| RandomForest | Level 2 (Type 2 + Type 3)                | 0.7          | 0.7083333333333334  |
+| RandomForest | Level 3 (Type 2 + Type 3 + Type 4)       | 0.65         | 0.7083333333333334  |
+
 ## Project Directory Structure
 
 ```text
