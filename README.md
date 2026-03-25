@@ -56,29 +56,64 @@ This design captures the dependencies between labels and ensures that the predic
 ## Execution Flow
 
 ```text
-main.py (entry point)
-  ↓
-prepare_data() [preprocessing/pipeline.py]
-  → Read data/AppGallery.csv + data/Purchasing.csv
-  → Apply column mapping and text cleaning
-  → Build chained labels
-  → Save cleaned_tickets.csv
-  ↓
-build_dataset_bundle() [data/dataset.py]
-  → Vectorize text with TF-IDF
-  → Split data into training and testing sets (80/20)
-  → Build aligned chained datasets
-  ↓
-ModelRunner.run() [modelling/runner.py]
-  → Train 6 models in sequence:
-    - RandomForest
-    - HistGradientBoosting
-    - SGD
-    - AdaBoost
-    - Voting
-    - ExtraTrees
-  → Evaluate each model across 3 chained levels
-  → Save results_summary.csv
++----------------------+
+|   main.py            |
+|   (Entry Point)      |
++----------+-----------+
+           |
+           v
++----------------------+
+| prepare_data()       |
+| preprocessing/       |
+| pipeline.py          |
++----------+-----------+
+           |
+           +--> Read AppGallery.csv
+           |
+           +--> Read Purchasing.csv
+           |
+           +--> Column mapping
+           |
+           +--> Text cleaning
+           |
+           +--> Build chained labels
+           |
+           +--> Save cleaned_tickets.csv
+           |
+           v
++----------------------+
+| build_dataset_bundle() |
+| data/dataset.py        |
++----------+-------------+
+           |
+           +--> TF-IDF vectorization
+           |
+           +--> Train/Test split
+           |    (80/20)
+           |
+           +--> Build aligned
+           |    chained datasets
+           |
+           v
++----------------------+
+| ModelRunner.run()    |
+| modelling/runner.py  |
++----------+-----------+
+           |
+           +--> Train models
+           |    - RandomForest
+           |    - HistGradientBoosting
+           |    - SGD
+           |    - AdaBoost
+           |    - Voting
+           |    - ExtraTrees
+           |
+           +--> Evaluate 3 levels
+           |    - Level 1 (Type 2)
+           |    - Level 2 (Type 2 + Type 3)
+           |    - Level 3 (Type 2 + Type 3 + Type 4)
+           |
+           +--> Save results_summary.csv
 ```
 
 ## Design Patterns 
