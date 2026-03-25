@@ -83,25 +83,32 @@ ModelRunner.run() [modelling/runner.py]
 
 ## Design Patterns 
 
-Facade/Controller (main.py)
-main.py orchestrates preprocessing → dataset building → modelling → results export.
-Keeps business logic in modules, main is a single coordinator.
 
-Strategy (models)
-RandomForest, HistGradientBoosting, SGD, AdaBoost, Voting, ExtraTrees implement a common model interface.
-Runner can swap algorithms without pipeline changes.
+- **Facade / Controller (main.py)**
+  - `main.py` orchestrates preprocessing → dataset building → modelling → results export  
+  - Keeps business logic in modules; main acts as a single coordinator
 
-Factory/Registry (model registration)
-Central model registry maps names to classes; runner instantiates models dynamically.
-Add new model with minimal pipeline edits.
+- **Strategy Pattern (models)**
+  - RandomForest, HistGradientBoosting, SGD, AdaBoost, Voting, ExtraTrees implement a common model interface  
+  - Runner can swap algorithms without changing the pipeline
 
-Template Method (BaseModel)
-Base class defines training/predict/report workflow; concrete models implement estimator-specific details.
-Reduces duplicate code and standardizes behavior.
+- **Factory / Registry (model registration)**
+  - Central model registry maps model names to classes  
+  - Runner dynamically instantiates models  
+  - New models can be added with minimal pipeline modification
 
-Data Transfer Objects (data containers)
-Structured objects for prepared data, dataset bundle, level results, model results.
-Ensures clear, consistent multi-level chain label flow.
+- **Template Method (BaseModel)**
+  - Base class defines the workflow: train → predict → report  
+  - Concrete models implement estimator-specific details  
+  - Reduces code duplication and enforces standard behavior
+
+- **Data Transfer Objects (DTOs / data containers)**
+  - Structured objects for:
+    - prepared data  
+    - dataset bundle  
+    - level results  
+    - model results  
+  - Ensures consistent data flow across multi-level chained labels
 
 ## Environment Setup
 
