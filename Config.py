@@ -7,20 +7,21 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 class Config:
-    # MODIFY: Use canonical column names so preprocessing and modelling share one schema.
+    #  Use canonical column names so preprocessing and modelling share one schema.
     TICKET_ID = "ticket_id"
     INTERACTION_ID = "interaction_id"
     INTERACTION_DATE = "interaction_date"
     MAILBOX = "mailbox"
     TICKET_SUMMARY = "ticket_summary"
     INTERACTION_CONTENT = "interaction_content"
+    #  Define type column names as constants to avoid hardcoding in the pipeline and ensure consistency.
     TEXT = "text"
     TYPE1 = "type1"
     TYPE2 = "type2"
     TYPE3 = "type3"
     TYPE4 = "type4"
 
-    # MODIFY: Define label names for each classification level to avoid hardcoding in the pipeline.
+    #  Define label names for each classification level to avoid hardcoding in the pipeline.
     LABEL_L2 = "label_l2"
     LABEL_L3 = "label_l3"
     LABEL_L4 = "label_l4"
@@ -29,14 +30,14 @@ class Config:
 
 @dataclass(frozen=True)
 class AppConfig:
-    # MODIFY: Centralize pipeline settings so the controller only orchestrates the workflow.
+    # Centralize pipeline settings so the controller only orchestrates the workflow.
     base_dir: Path = BASE_DIR
     raw_data_dir: Path = BASE_DIR / "data"
-    # MODIFY: Define input files as a tuple to ensure immutability and clear expected inputs.
+    #  Define input files as a tuple to ensure immutability and clear expected inputs.
     input_files: Tuple[str, ...] = ("AppGallery.csv", "Purchasing.csv")
     cleaned_export_path: Path = BASE_DIR / "cleaned_tickets.csv"
     results_export_path: Path = BASE_DIR / "results_summary.csv"
-    # MODIFY: Define constants for preprocessing and modelling to avoid magic numbers and strings in the code.
+    #  Define constants for preprocessing and modelling to avoid magic numbers and strings in the code.
     none_label: str = "NONE"
     chain_separator: str = "__"
     min_samples_per_class: int = 3
@@ -45,7 +46,7 @@ class AppConfig:
     max_features: int = 2000
     min_df: int = 4
     max_df: float = 0.9
-    # MODIFY: List enabled models in a tuple to ensure immutability and clear model selection.
+    #  List enabled models in a tuple to ensure immutability and clear model selection.
     enabled_models: Tuple[str, ...] = (
         "RandomForest",
         "HistGradientBoosting",
